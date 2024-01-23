@@ -9,9 +9,7 @@ const styleFile = path.join("06-build-page", "project-dist", "style.css");
 const assetsFolder = path.join("06-build-page", "assets");
 const assetsFolderCopy = path.join("06-build-page", "project-dist", "assets");
 
-fs.mkdir(notesProject, err => {
-    if(err) throw err; 
-});
+fs.mkdir(notesProject, { recursive: true }, () => {});
 
 function folderToCopy(folder, folderCopy) {
     fs.mkdir(folderCopy, () => {});
