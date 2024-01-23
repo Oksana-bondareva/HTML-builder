@@ -32,12 +32,26 @@ function folderToCopy(folder, folderCopy) {
 }
 folderToCopy(assetsFolder, assetsFolderCopy);
 
-fs.readdir (componentsFolder, { withFileTypes: true }, (err, files) => {
-    if (err) {
-        console.log(err.message)
-    } else {
-
-    }
+fs.createReadStream(templateFile).on("data", (data) => {
+    let dataString = data.toString();
+    fs.readdir (componentsFolder, { withFileTypes: true }, (err, files) => {
+        if (err) {
+            console.log(err.message)
+        } else {
+            files.forEach((file) => {
+                const filePath = path.join(componentsFolder, file.name);
+                const extName = path.extname(filePath);
+                if (extName === ".html") {
+                    let componentTitle = file.name.replace(extName, '');
+                    componentTitle = `{{${componentTitle}}}`;
+                    fs.createReadStream(filePath).on("data", (part) => {
+                        dataString = dataString.replaceAll(componentTitle, part);
+                        fs.writeFile(htmlFile, dataString, () => {});
+                    });
+                }
+            })
+        }
+    })
 });
 
 fs.readdir(notesStyles, { withFileTypes: true }, (err, files) => {
